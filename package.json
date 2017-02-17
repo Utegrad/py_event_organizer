@@ -1,0 +1,10 @@
+{
+	"name": "py_event_organizer",
+	"version": "1.0.0",
+	"description": "Django applications to communicate event organization messages",
+	"author": "Matt Larsen <utegrad@gmail.com>",
+	"dependencies": {
+		"bootstrap": "3.x",
+		"jquery": "3.x"
+	}
+}
