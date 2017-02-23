@@ -1,7 +1,7 @@
 import unittest
 from django.test import TestCase
 
-from ..models import CONTACT_TYPES, get_contact_type_value
+from  ..models.common import CONTACT_TYPES, get_contact_type_value
 
 class ContactTypeTests(unittest.TestCase):
 

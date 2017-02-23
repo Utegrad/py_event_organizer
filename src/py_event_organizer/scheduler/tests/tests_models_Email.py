@@ -2,7 +2,8 @@ import unittest
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from ..models import Email, Participant
+from ..models.contacts import Email
+from ..models.partipation import Participant
 
 class EmailTestCase(unittest.TestCase):
 

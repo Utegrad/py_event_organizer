@@ -1,7 +1,7 @@
 import unittest
 from django.test import TestCase
 
-from ..models import SMS
+from ..models.contacts import SMS
 
 # Create your tests here.
 
