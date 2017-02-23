@@ -22,8 +22,7 @@ class ContactType(TimeStampedObjectModel):
     type = models.CharField( max_length=5, choices=CONTACT_TYPES, default='SMS',
                              unique=True, )
     #
-    ''' TODO: changed model defintion to use choices. Will need to deal with data
-        issues for migration.  Also need to work out printing item[1] from matching element
+    ''' TODO: changed model definition to use choices.
     '''
 
     def __str__(self):
@@ -59,7 +58,6 @@ def get_contact_type(contact_type):
 
 class SMS(Contact):
     contact_point = models.CharField(max_length=16, blank=False, )
-
 
     class Meta:
         verbose_name = "SMS Contact"
