@@ -1,0 +1,38 @@
+[
+  {
+    "model": "scheduler.organization",
+    "pk": 1,
+    "fields": {
+      "created_on": "2017-02-22T05:49:20.899Z",
+      "updated_on": "2017-02-22T05:49:20.899Z",
+      "name": "First Organization"
+    }
+  },
+  {
+    "model": "scheduler.organization",
+    "pk": 2,
+    "fields": {
+      "created_on": "2017-02-22T05:49:27.723Z",
+      "updated_on": "2017-02-22T05:49:27.723Z",
+      "name": "Second Organization"
+    }
+  },
+  {
+    "model": "scheduler.contacttype",
+    "pk": 1,
+    "fields": {
+      "created_on": "2017-02-22T05:48:52.018Z",
+      "updated_on": "2017-02-23T01:57:48.772Z",
+      "type": "EMAIL"
+    }
+  },
+  {
+    "model": "scheduler.contacttype",
+    "pk": 2,
+    "fields": {
+      "created_on": "2017-02-22T05:49:01.544Z",
+      "updated_on": "2017-02-22T05:49:01.544Z",
+      "type": "SMS"
+    }
+  }
+]
