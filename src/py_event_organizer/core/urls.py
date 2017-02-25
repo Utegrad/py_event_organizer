@@ -1,8 +1,7 @@
 from django.conf.urls import url
 
-from scheduler.views import IndexView as scheduler_index
+from scheduler.views.standard import IndexView as scheduler_index
 
-
-urlpatters = [
+urlpatterns = [
     url(r'^$', view=scheduler_index.as_view()),
 ]

@@ -1,7 +1,7 @@
 from django.conf.urls import url
-from . import views
+from .views.standard import IndexView as home_page
 
 app_name = 'scheduler'
 urlpatterns = [
-    url(r'^$', views.IndexView.as_view(), name='index'),
+    url(r'^$', view=home_page.as_view(), name='index'),
 ]

@@ -17,12 +17,13 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.conf import settings
 
-from scheduler.views import IndexView as SchedulerIndex
+from scheduler.views.standard import IndexView as SchedulerIndex
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^scheduler/', include('scheduler.urls')),
     url(r'^$', view=SchedulerIndex.as_view(), name='core_index'),
+    url(r'^api/v1/', include('core.api', namespace='api')),
 ]
 
 

@@ -4,7 +4,7 @@ from django.test import RequestFactory
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from ..views import IndexView
+from ..views.standard import IndexView
 
 class IndexViewTests(unittest.TestCase):
 

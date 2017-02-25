@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 
 from ..models.contacts import Email
-from ..models.partipation import Participant
+from ..models.participation import Participant
 
 class EmailTestCase(unittest.TestCase):
 

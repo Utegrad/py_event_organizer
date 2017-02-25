@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from .models.contacts import SMS, Email
-from .models.partipation import Participant, Organization, Membership, Delegates
+from .models.participation import Participant, Organization, Membership, Delegates
 
 my_models = [Organization, SMS, Email, Participant, Membership, Delegates]
 
