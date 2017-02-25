@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from ..views.standard import IndexView
 
+
 class IndexViewTests(unittest.TestCase):
 
     def setUp(self):
