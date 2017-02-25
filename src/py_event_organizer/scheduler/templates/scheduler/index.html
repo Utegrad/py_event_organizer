@@ -1,0 +1,28 @@
+{% extends 'scheduler/generic_base.html' %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{% block title %}Scheduling and Notification Tool{% endblock %}
+
+{% block main_content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Scheduling and Notification Tool</h1>
+    </div>
+    <span class="caret"></span>
+    <p class="lead">Create a roster for mulitple teams, schedule events, and send notifications
+    for those events to your particiants using their prefered contact method becoming a nuisance.</p>
+        <dl class="dl-horizontal">
+          <dt>Delegates</dt>
+          <dd>Assign delegates to receive notifications for your participants</dd>
+          <dt>Privacy</dt>
+            <dd>Avoid the faux pas of leaking contact information to the group by sending individual
+                messages</dd>
+            <dt>Group Texts, YUK!</dt>
+            <dd>Send individual messages instead of creating a nuisance group message that not everyone
+                will want the follow up messages from. "Take me off this group... Me too..."</dd>
+        </dl>
+    <div class="text-center bg-info">
+        <h3>Get Started</h3>
+    </div>
+</div>
+{% endblock main_content %}

@@ -9,6 +9,8 @@ class Participant(TimeStampedObjectModel):
     delegates = models.ManyToManyField('self', through='Delegates',
                                        symmetrical=False,
                                        related_name='related_to', blank=True )
+    deferential_delegation = models.BooleanField(help_text= 'only delegates should receive notifications',
+                                                 default=False, )
 
     def __str__(self):
         return "{0}".format(self.name)
