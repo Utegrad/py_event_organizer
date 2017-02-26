@@ -1,13 +1,13 @@
 import unittest
-
 import sys
+
 from django.http import Http404
 from django.test import RequestFactory
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from ..views.scheduler import MyManagedOrgsListView, OrganizationMembershipListView, UpdateOrganizationView, \
-    UpdateMembershipView
+from ..views.scheduler import MyManagedOrgsListView, OrganizationMembershipListView, \
+    UpdateOrganizationView,  UpdateMembershipView
 from ..models.participation import Participant, Membership, Organization, Delegates
 
 
