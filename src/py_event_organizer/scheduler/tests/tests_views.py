@@ -8,7 +8,6 @@ from ..views.standard import IndexView
 
 
 class IndexViewTests(unittest.TestCase):
-
     def setUp(self):
         self.factory = RequestFactory()
 

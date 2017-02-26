@@ -21,6 +21,7 @@ class OrganizationTestCases(unittest.TestCase):
     def setUp(self):
         self.org_name = 'organization 1'
         self.org = Organization(name=self.org_name)
+        self.org.save()
 
     def test_organization_name_matches(self):
         self.assertEqual(self.org.__str__(), self.org_name)
@@ -45,11 +46,10 @@ class MembershipTestCases(unittest.TestCase):
         self.membership_2.save()
 
 
-    # @unittest.skip("WIP")
     def test_memberships_where_editor(self):
-        # arrange
         mgr = MembershipManager()
-        membership = mgr.get_participant_memberships_by_role(person=self.participant_1, role='EDIT')
+        membership = mgr.get_participant_memberships_by_role(participant_id=self.participant_1,
+                                                             role='EDIT')
         self.assertGreaterEqual(len(membership), 1)
 
 

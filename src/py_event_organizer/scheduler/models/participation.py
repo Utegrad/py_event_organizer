@@ -45,8 +45,9 @@ class Membership(TimeStampedObjectModel):
 
 
 class MembershipManager(models.Manager):
-    def get_participant_memberships_by_role(self, person, role):
-        return Membership.objects.filter(participant=person, role=role)
+    def get_participant_memberships_by_role(self, participant_id, role):
+        memberships = Membership.objects.filter(participant_id=participant_id, role=role)
+        return memberships
 
 
 class Delegates(TimeStampedObjectModel):
