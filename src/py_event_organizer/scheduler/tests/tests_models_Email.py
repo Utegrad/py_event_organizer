@@ -1,4 +1,6 @@
 import unittest
+
+from django.template.defaultfilters import first
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
@@ -12,7 +14,7 @@ class EmailTestCase(unittest.TestCase):
         self.assertEqual(instance.type, "EMAIL")
 
     def test_bad_email_raises_validation_error(self):
-        participant = Participant(name="Blah")
+        participant = Participant(first_name="Blah")
         email_contact = Email(contact_point="wrong", owner=participant)
         with self.assertRaises(ValidationError):
             email_contact.clean_fields()

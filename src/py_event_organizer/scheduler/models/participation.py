@@ -4,7 +4,9 @@ from .common import TimeStampedObjectModel, CONTACT_TYPES
 
 
 class Participant(TimeStampedObjectModel):
-    name = models.CharField(max_length=64, blank=False, )
+    first_name = models.CharField(max_length=48, blank=False, )
+    last_name = models.CharField(max_length=48, blank=True, )
+    nick_name = models.CharField(max_length=64, blank=True, )
     prefered_contact_method = models.CharField(max_length=5, choices=CONTACT_TYPES, default='SMS', )
     delegates = models.ManyToManyField('self', through='Delegates',
                                        symmetrical=False,
@@ -12,8 +14,13 @@ class Participant(TimeStampedObjectModel):
     deferential_delegation = models.BooleanField(help_text= 'only delegates should receive notifications',
                                                  default=False, )
 
+    @property
+    def full_name(self):
+        return ' '.join([self.first_name, self.last_name])
+
     def __str__(self):
-        return "{0}".format(self.name)
+        return "{0}".format(self.full_name)
+
 
 
 class Organization(TimeStampedObjectModel):
@@ -35,6 +42,11 @@ class Membership(TimeStampedObjectModel):
 
     class Meta:
         unique_together = ( ('participant', 'organization'), )
+
+
+class MembershipManager(models.Manager):
+    def get_participant_memberships_by_role(self, person, role):
+        return Membership.objects.filter(participant=person, role=role)
 
 
 class Delegates(TimeStampedObjectModel):

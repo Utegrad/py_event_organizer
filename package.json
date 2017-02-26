@@ -5,6 +5,7 @@
 	"author": "Matt Larsen <utegrad@gmail.com>",
 	"dependencies": {
 		"bootstrap": "3.x",
-		"jquery": "3.x"
+		"jquery": "3.x",
+		"angular": "1.6.2"
 	}
 }
