@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from .common import TimeStampedObjectModel, CONTACT_TYPES
 
@@ -30,6 +31,9 @@ class Organization(TimeStampedObjectModel):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('scheduler:update_organization', kwargs={'pk': self.pk})
+
 
 class Membership(TimeStampedObjectModel):
     MEMBER_TYPE = (('EDIT', 'Editor'), ('VIEW', 'Viewer'),)
@@ -39,6 +43,13 @@ class Membership(TimeStampedObjectModel):
 
     def __str__(self):
         return "{0} : {1}".format(self.participant, self.organization)
+
+    def get_absoute_url(self):
+        return reverse('scheduler:list_memberhips', kwargs={'pk': self.pk})
+
+    @property
+    def memberset_organization_name(self):
+        return self.objects.all()[0].organization
 
     class Meta:
         unique_together = ( ('participant', 'organization'), )

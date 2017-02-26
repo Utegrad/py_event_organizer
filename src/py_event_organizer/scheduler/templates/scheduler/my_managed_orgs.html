@@ -1,10 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'index.html' %}
+{% block title %}My Managed Organizations{% endblock %}
 
-</body>
-</html>
+{% block main_content %}
+    {% if my_managed_orgs %}
+        <div class="page-header">
+            <h3>Manageable Organization's</h3>
+        </div>
+        <p class="lead">Manage memberhips for these organizations:</p>
+            <table id="managed_orgs_table" class="display table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Organization</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for membership in my_managed_orgs %}
+                        <tr>
+                            <td>#</td>
+                            <td><a href="{% url 'scheduler:update_organization' membership.organization.id %}">
+                                {{ membership.organization }}</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+    {% else %}
+        <div class="page-header">
+            <h3>No Managable Organization Memberships Found</h3>
+        </div>
+        <p class="lead bg-warning">Couldn't find any organizations where you're setup for configuring memberships</p>
+            <ul>
+                <li>My Memberships</li>
+                <li>Create an Organization</li>
+            </ul>
+    {% endif %}
+
+{% endblock main_content %}

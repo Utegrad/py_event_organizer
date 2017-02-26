@@ -1,0 +1,34 @@
+{% extends 'index.html' %}
+{% block title %}Organization Membership{% endblock title %}
+
+{% block main_content %}
+    {% if memberships %}
+        <div class="page-header">
+            <h3>Memberships</h3>
+        </div>
+        <p class="lead">Memberships for BLAH</p>
+        <table id="memberships_table" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Member</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in memberships %}
+                    <tr>
+                        <td>#</td>
+                        <td>{{ member.participant }}</td>
+                        <td>{{ member.role }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="page-header">
+            <h3>No Memberships for BLAH</h3>
+        </div>
+        <p class="lead">No memberships for found for this organization</p>
+    {% endif %}
+{% endblock main_content %}
