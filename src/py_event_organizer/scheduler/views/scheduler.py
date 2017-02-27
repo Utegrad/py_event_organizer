@@ -31,13 +31,22 @@ class UpdateMembershipView(generic.UpdateView):
     model = Membership
 
 
-class OrganizationMembershipListView(generic.ListView):
+class OrganizationMembershipListView(generic.DetailView):
+    def __init__(self):
+        self.organization = get_object_or_404(Organization, self.kwargs['pk'])
+        self.queryset =self.organization.membership_set.all()
+
     template_name = 'scheduler/organization_membership.html'
     context_object_name = 'memberships'
 
-    def get_queryset(self):
+    def get_context_data(self, **kwargs):
+        context = super(OrganizationMembershipListView, self).get_context_data(**kwargs)
         organization = get_object_or_404(Organization, pk=self.kwargs['pk'])
-        return organization.membership_set.all()
+        memberships = organization.membership_set.all()
+        context['organization'] = organization
+        context['memberships'] = memberships
 
-
+    # def get_queryset(self):
+    #     organization = get_object_or_404(Organization, pk=self.kwargs['pk'])
+    #     return organization.membership_set.all()
 
