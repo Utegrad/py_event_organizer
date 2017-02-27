@@ -6,7 +6,7 @@
         <div class="page-header">
             <h3>Memberships</h3>
         </div>
-        <p class="lead">Memberships for {{ memberships.organization }}</p>
+        <p class="lead">Memberships for {{ organization }}</p>
         <table id="memberships_table" class="table table-striped">
             <thead>
                 <tr>
@@ -16,7 +16,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for member in memberships.memberships %}
+                {% for member in memberships %}
                     <tr>
                         <td>#</td>
                         <td>{{ member.participant }}</td>
@@ -27,7 +27,7 @@
         </table>
     {% else %}
         <div class="page-header">
-            <h3>No Memberships for BLAH</h3>
+            <h3>No Memberships for {{ organization }}</h3>
         </div>
         <p class="lead">No memberships for found for this organization</p>
     {% endif %}
