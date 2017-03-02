@@ -1,13 +1,15 @@
 from django.conf.urls import url
+from rest_framework.routers import DefaultRouter
 
-from scheduler.views.api import ParticipantApiView as participant_list, \
-    MembershipApiView as membership_list, OrganizationApiView as organization_list, \
-    DelegateApiView as delegate_list
+from scheduler.views.api import ParticipantApiView , MembershipApiView, OrganizationApiView, \
+    DelegateApiView
+
+router = DefaultRouter()
+router.register(r'v1/participants', ParticipantApiView)
+router.register(r'v1/memberships', MembershipApiView)
+router.register(r'v1/organizations', OrganizationApiView)
+router.register(r'v1/deletates', DelegateApiView)
+
+urlpatterns = router.urls
 
 
-urlpatterns = [
-    url(r'^participants', view=participant_list.as_view(), name='participant_list'),
-    url(r'^memberships', view=membership_list.as_view(), name='membership_list'),
-    url(r'^organizations', view=organization_list.as_view(), name='organization_list'),
-    url(r'^delegates', view=delegate_list.as_view(), name='delegate_list'),
-]

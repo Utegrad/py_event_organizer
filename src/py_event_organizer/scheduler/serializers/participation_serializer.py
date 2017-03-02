@@ -7,7 +7,7 @@ class ParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Participant
-        fields = ('name', 'prefered_contact_method', )
+        fields = ('first_name', 'last_name', 'full_name', 'nick_name', 'prefered_contact_method', )
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -22,6 +22,7 @@ class MembershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Membership
         fields = '__all__'
+
 
 
 class DelegatesSerializer(serializers.ModelSerializer):

@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^scheduler/', include('scheduler.urls')),
     url(r'^$', include('core.urls', namespace='core')),
-    url(r'^api/v1/', include('core.api', namespace='api')),
+    url(r'^api/', include('core.api', namespace='api')),
 ]
 
 

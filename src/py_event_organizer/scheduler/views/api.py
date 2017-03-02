@@ -1,4 +1,5 @@
 from rest_framework.generics import ListAPIView
+from rest_framework.viewsets import ModelViewSet
 
 from ..serializers.participation_serializer import ParticipantSerializer, MembershipSerializer
 from ..serializers.participation_serializer import OrganizationSerializer, DelegatesSerializer
@@ -6,21 +7,21 @@ from ..serializers.participation_serializer import OrganizationSerializer, Deleg
 from ..models.participation import Participant, Membership, Organization, Delegates
 
 
-class ParticipantApiView(ListAPIView):
+class ParticipantApiView(ModelViewSet):
     queryset = Participant.objects.all()
     serializer_class = ParticipantSerializer
 
 
-class OrganizationApiView(ListAPIView):
+class OrganizationApiView(ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
 
 
-class MembershipApiView(ListAPIView):
-    queryset = Organization.objects.all()
-    serializer_class = OrganizationSerializer
+class MembershipApiView(ModelViewSet):
+    queryset = Membership.objects.all()
+    serializer_class = MembershipSerializer
 
 
-class DelegateApiView(ListAPIView):
+class DelegateApiView(ModelViewSet):
     queryset = Delegates.objects.all()
     serializer_class = DelegatesSerializer
