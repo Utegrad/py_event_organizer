@@ -1,0 +1,33 @@
+{% extends 'index.html' %}
+{% block title %}My Memberships{% endblock title %}
+
+{% block main_content %}
+    {% if my_memberships %}
+        <div class="page-header">
+            <h3>My Memberships</h3>
+        </div>
+        <table id="memberships_table" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Organization</th>
+                    <th>My Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for membership in my_memberships %}
+                    <tr>
+                        <td>#</td>
+                        <td><a href="{% url 'scheduler:organization_membership' membership.organization.id %}">{{ membership.organization }}</a></td>
+                        <td>{{ membership.role }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="page-header">
+            <h3>No Memberships Found</h3>
+        </div>
+        <p class="lead">Could not find any memberhips</p>
+    {% endif %}
+{% endblock main_content %}

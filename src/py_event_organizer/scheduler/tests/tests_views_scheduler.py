@@ -7,7 +7,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 from ..views.scheduler import MyManagedOrgsListView, OrganizationMembershipListView, \
-    UpdateOrganizationView,  UpdateMembershipView
+    UpdateOrganizationView,  UpdateMembershipView, MyOrgsListView
 from ..models.participation import Participant, Membership, Organization, Delegates
 
 
@@ -57,6 +57,13 @@ class MyOrganizationsViewTests(SchedulerTests):
                                            kwargs={'pk': self.pk_arg}))
         response = MyManagedOrgsListView.as_view()(request, pk=self.pk_arg)
         self.assertGreaterEqual(len(response.context_data['object_list']), 1)
+
+    def test_MyOrgsListView_returns_200(self):
+        request = self.factory.get(reverse('scheduler:my_memberships', kwargs={'pk': self.pk_arg}))
+        response = MyOrgsListView.as_view()(request, pk=self.pk_arg)
+        self.assertEqual(response.status_code, 200)
+
+
 
 
 class MyManagedOrgsListViewTests(TestCase):
