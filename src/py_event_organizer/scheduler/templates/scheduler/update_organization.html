@@ -5,14 +5,23 @@
 
 {% block main_content %}
 <div>
-    <h3>{{ organization }}</h3>
+    <div class="row">
+        <div class="col-md-8 col-xs-12"><h3>{{ organization }}</h3></div>
+    </div>
     <form action="" method="post" class="">
-            <div class="form-group">
+        <div class="row">
+            <div class="form-group col-md-3 col-xs-12">
             {% csrf_token %}
             {{ form|crispy }}
             </div>
-            <input class="" type="submit" value="Save">
+        </div>
+        <div class="row">
+            <div class="col-xs-3 col-md-3"><input class="" type="submit" value="Save"></div>
+            <div class="col-xs-3 col-md-3">
+                <a class="btn btn-default btn-sm" href="{% url 'scheduler:organization_membership' organization.id %}">Membership</a>
+            </div>
+        </div>
     </form>
-    <p><a href="{% url 'scheduler:organization_membership' organization.id %}">Membership</a></p>
+
 </div>
 {% endblock main_content %}

@@ -38,19 +38,47 @@ class MembershipTestCases(unittest.TestCase):
         self.organization_1.save()
         self.organization_2 = Organization(name="Org2", )
         self.organization_2.save()
-        self.membership_1 = Membership(role='EDIT', participant=self.participant_1,
-                                  organization=self.organization_1)
-        self.membership_2 = Membership(role='VIEW', participant=self.participant_1,
-                                  organization=self.organization_2)
-        self.membership_1.save()
-        self.membership_2.save()
+        self.p1_membership_1 = Membership(role='EDIT', participant=self.participant_1,
+                                          organization=self.organization_1)
+        self.p1_membership_2 = Membership(role='VIEW', participant=self.participant_1,
+                                          organization=self.organization_2)
+        self.p2_membership_1 = Membership(role='VIEW', participant=self.participant_2,
+                                          organization=self.organization_1)
+        self.p1_membership_1.save()
+        self.p1_membership_2.save()
+        self.p2_membership_1.save()
 
+        self.p2_membership_count = 1
+        self.p1_membership_count = 2
+        self.p1_editor_count = 1
+        self.p2_editor_count = 0
 
     def test_memberships_where_editor(self):
         mgr = MembershipManager()
         membership = mgr.get_participant_memberships_by_role(participant_id=self.participant_1,
                                                              role='EDIT')
         self.assertGreaterEqual(len(membership), 1)
+
+    def test_memberships_all(self):
+        mgr = MembershipManager()
+        p1_membership = mgr.get_participant_memberships(participant_id=self.participant_1)
+        p2_membership = mgr.get_participant_memberships(participant_id=self.participant_2)
+        self.assertEqual(len(p1_membership), self.p1_membership_count)
+        self.assertEqual(len(p2_membership), self.p2_membership_count)
+
+    def test_get_all_participation(self):
+        mgr = MembershipManager()
+        p1_all_memberships = mgr.get_participation(self.participant_1)
+        p2_all_memberships = mgr.get_participation(self.participant_2)
+        self.assertEqual(len(p1_all_memberships), self.p1_membership_count)
+        self.assertEqual(len(p2_all_memberships), self.p2_membership_count)
+
+    def test_get_all_participation_editor_count(self):
+        mgr = MembershipManager()
+        p1_edit_memberships = mgr.get_participation(self.participant_1, 'EDIT')
+        p2_edit_memberships = mgr.get_participation(self.participant_2, 'EDIT')
+        self.assertEqual(len(p1_edit_memberships), self.p1_editor_count)
+        self.assertEqual(len(p2_edit_memberships), self.p2_editor_count)
 
 
 

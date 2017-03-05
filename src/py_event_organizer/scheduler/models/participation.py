@@ -60,6 +60,17 @@ class MembershipManager(models.Manager):
         memberships = Membership.objects.filter(participant_id=participant_id, role=role)
         return memberships
 
+    def get_participant_memberships(self, participant_id):
+        memberships = Membership.objects.filter(participant_id=participant_id)
+        return memberships
+
+    def get_participation(self, participant_id, role=None):
+        if role is None:
+            return self.get_participant_memberships(participant_id)
+        else:
+            return self.get_participant_memberships_by_role(participant_id, role)
+
+
 
 class Delegates(TimeStampedObjectModel):
     participant = models.ForeignKey(Participant, related_name='delegated_from')

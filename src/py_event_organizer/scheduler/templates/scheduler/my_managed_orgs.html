@@ -6,20 +6,29 @@
         <div class="page-header">
             <h3>Manageable Organization's</h3>
         </div>
-        <p class="lead">Manage memberhips for these organizations:</p>
+        <p class="lead">Organizations you can manage:</p>
             <table id="managed_orgs_table" class="display table table-striped">
                 <thead>
                     <tr>
                         <th>#</th>
                         <th>Organization</th>
+                        <th>#</th>
+                        <th>#</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for membership in my_managed_orgs %}
                         <tr>
                             <td>#</td>
-                            <td><a href="{% url 'scheduler:update_organization' membership.organization.id %}">
-                                {{ membership.organization }}</a></td>
+                            <td>
+                                {{ membership.organization }}
+                            </td>
+                            <td>
+                                <a href="{% url 'scheduler:update_organization' membership.organization.id %}">Edit</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'scheduler:organization_membership' membership.organization.id %}">Membership</a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
