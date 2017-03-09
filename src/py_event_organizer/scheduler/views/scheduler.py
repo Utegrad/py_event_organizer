@@ -1,3 +1,5 @@
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 from django.views import generic
 from django.shortcuts import get_object_or_404
 
@@ -5,7 +7,19 @@ from ..models.participation import MembershipManager, Organization, Membership, 
 from ..forms.participation_forms import MembershipUpdateForm, DelegatesUpdateForm, \
     OrganizationUpdateForm, ParticipantUpdateForm
 
+
 # Create your views here.
+
+def add_organization_member(request, org_pk):
+    # TODO: Need to get the Membership record from the pk in the url
+    organization = get_object_or_404(Organization, pk=org_pk)
+    form = MembershipUpdateForm
+    context = {'form': form}
+    html_form = render_to_string('scheduler/add_organization_member.html',
+                                 context,
+                                 request=request, )
+    return JsonResponse({'html_form': html_form})
+
 
 # TODO: View needs to be limited to match pk to logged in user
 class MyManagedOrgsListView(generic.ListView):
@@ -49,6 +63,7 @@ class OrganizationMembershipListView(generic.ListView):
         organization = get_object_or_404(Organization, pk=self.kwargs['pk'])
         return organization.membership_set.all()
 
+
 class MyOrgsListView(generic.ListView):
     """Listing of organizations that a participant is a member of"""
     template_name = 'scheduler/my_memberships.html'
@@ -57,4 +72,3 @@ class MyOrgsListView(generic.ListView):
     def get_queryset(self):
         participant = get_object_or_404(Participant, pk=self.kwargs['pk'])
         return Membership.objects.filter(participant=participant)
-

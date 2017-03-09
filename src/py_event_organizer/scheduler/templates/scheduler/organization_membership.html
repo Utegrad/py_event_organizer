@@ -1,38 +1,51 @@
 {% extends 'index.html' %}
+{% load staticfiles %}
 {% block title %}Organization Membership{% endblock title %}
+{% block extra_static_sources %}
+
+{% endblock %}
 
 {% block main_content %}
-    {% if memberships %}
-        <div class="page-header">
-            <h3>Memberships</h3>
-        </div>
-        <p class="lead">Memberships for {{ organization }}</p>
-        <table id="memberships_table" class="table table-striped">
-            <thead>
+    <div class="page-header">
+        <h3>Memberships</h3>
+    </div>
+    <p class="lead">Memberships for {{ organization }}</p>
+    <table id="memberships_table" class="table table-striped">
+        <thead>
+            <tr>
+                <th><button type="button" class="btn btn-xs btn-primary js-add-member">
+                    <span style="color: red">+</span></button>
+                </th>
+                <th>Member</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in memberships %}
                 <tr>
-                    <th>#</th>
-                    <th>Member</th>
-                    <th>Role</th>
+                    <td>#</td>
+                    <td>{{ member.participant }}</td>
+                    <td>{{ member.role }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for member in memberships %}
-                    <tr>
-                        <td>#</td>
-                        <td>{{ member.participant }}</td>
-                        <td>{{ member.role }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="3" class="text-center bg-warning">No Members Found</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <div class="page-header">
-            <h3>No Memberships for {{ organization }}</h3>
+            {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center bg-warning">No Members Found</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="modal-member">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div>
         </div>
-        <p class="lead">No memberships for found for this organization</p>
-    {% endif %}
+    </div>
+
 {% endblock main_content %}
+
+{% block eof_extra_static_sources %}
+    <!-- Extra static sources for EOF -->
+    <script src="{% static 'scheduler/js/add_organization_member.js' %}"></script>
+{% endblock eof_extra_static_sources %}
