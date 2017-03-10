@@ -2,7 +2,9 @@
 {% load staticfiles %}
 {% block title %}Organization Membership{% endblock title %}
 {% block extra_static_sources %}
-
+<script type="text/javascript">
+    var Organization = {{ javascript_data }};
+</script>
 {% endblock %}
 
 {% block main_content %}

@@ -1,7 +1,9 @@
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+from django.utils.safestring import SafeString
 from django.views import generic
 from django.shortcuts import get_object_or_404
+import json
 
 from ..models.participation import MembershipManager, Organization, Membership, Participant
 from ..forms.participation_forms import MembershipUpdateForm, DelegatesUpdateForm, \
@@ -11,10 +13,17 @@ from ..forms.participation_forms import MembershipUpdateForm, DelegatesUpdateFor
 # Create your views here.
 
 def add_organization_member(request, org_pk):
+    """renders a modal partial template for adding members to an organization.
+
+    :param request: HTTP request
+    :param org_pk: Organization PK to add members into
+    :return:
+    """
     # TODO: Need to get the Membership record from the pk in the url
+    # not sure what I meant here with the comment.  Don't think that's relivant?
     organization = get_object_or_404(Organization, pk=org_pk)
     form = MembershipUpdateForm
-    context = {'form': form}
+    context = {'form': form, 'organization': organization}
     html_form = render_to_string('scheduler/add_organization_member.html',
                                  context,
                                  request=request, )
@@ -56,7 +65,11 @@ class OrganizationMembershipListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(OrganizationMembershipListView, self).get_context_data(**kwargs)
-        context['organization'] = get_object_or_404(Organization, pk=self.kwargs['pk'])
+        organization = get_object_or_404(Organization, pk=self.kwargs['pk'])
+        organization_dict = { 'name': organization.name, 'id': organization.pk, }
+        organization_json = json.dumps(organization_dict)
+        context['organization'] = organization
+        context['javascript_data'] = SafeString(organization_json)
         return context
 
     def get_queryset(self):
