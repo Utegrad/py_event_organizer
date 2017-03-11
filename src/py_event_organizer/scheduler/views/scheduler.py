@@ -66,10 +66,10 @@ class OrganizationMembershipListView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super(OrganizationMembershipListView, self).get_context_data(**kwargs)
         organization = get_object_or_404(Organization, pk=self.kwargs['pk'])
-        organization_dict = { 'name': organization.name, 'id': organization.pk, }
-        organization_json = json.dumps(organization_dict)
+        organization_dict = {'organization_name': organization.name, 'organization_id': organization.pk, }
+        context_json = json.dumps(organization_dict)
         context['organization'] = organization
-        context['javascript_data'] = SafeString(organization_json)
+        context['context_json'] = SafeString(context_json)
         return context
 
     def get_queryset(self):
