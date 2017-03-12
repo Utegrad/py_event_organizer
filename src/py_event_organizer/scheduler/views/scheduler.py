@@ -12,23 +12,6 @@ from ..forms.participation_forms import MembershipUpdateForm, DelegatesUpdateFor
 
 # Create your views here.
 
-def add_organization_member(request, org_pk):
-    """renders a modal partial template for adding members to an organization.
-
-    :param request: HTTP request
-    :param org_pk: Organization PK to add members into
-    :return:
-    """
-    # TODO: Need to get the Membership record from the pk in the url
-    # not sure what I meant here with the comment.  Don't think that's relivant?
-    organization = get_object_or_404(Organization, pk=org_pk)
-    form = MembershipUpdateForm
-    context = {'form': form, 'organization': organization}
-    html_form = render_to_string('scheduler/add_organization_member.html',
-                                 context,
-                                 request=request, )
-    return JsonResponse({'html_form': html_form})
-
 
 # TODO: View needs to be limited to match pk to logged in user
 class MyManagedOrgsListView(generic.ListView):
@@ -56,6 +39,33 @@ class UpdateMembershipView(generic.UpdateView):
     template_name = 'scheduler/update_membership.html'
     form_class = MembershipUpdateForm
     model = Membership
+
+def add_organization_member(request, org_pk):
+    """renders a modal partial template for adding members to an organization.
+
+    :param request: HTTP request
+    :param org_pk: Organization PK to add members into
+    :return:
+    """
+
+    data = dict()
+    organization = get_object_or_404(Organization, pk=org_pk)
+
+    if request.method == 'POST':
+        form = MembershipUpdateForm(request.POST)
+        if form.is_valid():
+            form.save()
+            data['form_is_valid'] = True
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = MembershipUpdateForm
+
+    context = {'form': form, 'organization': organization}
+    data['html_form'] = render_to_string('scheduler/add_organization_member.html',
+                                 context,
+                                 request=request, )
+    return JsonResponse(data)
 
 
 class OrganizationMembershipListView(generic.ListView):
