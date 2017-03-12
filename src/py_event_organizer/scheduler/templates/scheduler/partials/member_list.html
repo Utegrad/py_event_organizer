@@ -1,0 +1,11 @@
+{% for member in memberships %}
+    <tr>
+        <td>#</td>
+        <td>{{ member.participant }}</td>
+        <td>{{ member.role }}</td>
+    </tr>
+{% empty %}
+    <tr>
+        <td colspan="3" class="text-center bg-warning">No Members Found</td>
+    </tr>
+{% endfor %}

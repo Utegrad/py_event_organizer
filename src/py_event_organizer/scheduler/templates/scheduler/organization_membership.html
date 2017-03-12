@@ -15,25 +15,16 @@
     <table id="memberships_table" class="table table-striped">
         <thead>
             <tr>
-                <th><button type="button" class="btn btn-xs btn-primary js-add-member">
-                    <span style="color: red">+</span></button>
+                <th><button type="button" class="btn btn-xs btn-primary js-add-member"
+                            data-url="{% url 'scheduler:add_member' organization.id %}">
+                    <span class="glyphicon glyphicon-plus"></span></button>
                 </th>
                 <th>Member</th>
                 <th>Role</th>
             </tr>
         </thead>
         <tbody>
-            {% for member in memberships %}
-                <tr>
-                    <td>#</td>
-                    <td>{{ member.participant }}</td>
-                    <td>{{ member.role }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="3" class="text-center bg-warning">No Members Found</td>
-                </tr>
-            {% endfor %}
+            {% include 'scheduler/partials/member_list.html' %}
         </tbody>
     </table>
 

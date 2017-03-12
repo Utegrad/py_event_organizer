@@ -9,8 +9,9 @@ $(function() {
 
 
     var loadForm = function () {
+        var btn = $(this);
         $.ajax({
-            url: '/scheduler/organization/' + context_data.organization_id + '/add_member/',
+            url: btn.attr("data-url"),
             type: 'get',
             dataType: 'json',
             beforeSend: function() {
@@ -30,9 +31,10 @@ $(function() {
             data: form.serialize(),
             type: form.attr("method"),
             dataType: 'json',
-            success: function(data){
+            success: function (data){
                 if(data.form_is_valid){
-                    alert("Member added"); //placeholder
+                    $("#memberships_table tbody").html(data.html_member_list);
+                    $("#modal-member").modal("hide");
                 }
                 else {
                     $("#modal-member .modal-content").html(data.html_form);
@@ -44,7 +46,7 @@ $(function() {
 
     //add member to organization
     $(".js-add-member").click(loadForm);
-    $("#modal-member").on("submit", ".js-member-add-form", saveForm);
+    $("#modal-member").on("submit", ".js-add-member-form", saveForm);
 
 });
 

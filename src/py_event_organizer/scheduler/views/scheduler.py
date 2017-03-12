@@ -40,6 +40,39 @@ class UpdateMembershipView(generic.UpdateView):
     form_class = MembershipUpdateForm
     model = Membership
 
+
+class ObjectCrudFormObject:
+    """class created to hold arguments for save_organization_membership function"""
+    form = None
+    template_name = None
+    object_id = None
+
+    def __init__(self, form, template_name, object_id):
+        self.form = form
+        self.template_name = template_name
+        self.object_id = object_id
+
+
+def save_organization_membership(request, crud_form):
+    data = dict()
+    context = dict()
+    organization = get_object_or_404(Organization, pk=crud_form.object_id)
+
+    if request.method == 'POST':
+        if crud_form.form.is_valid():
+            crud_form.form.save()
+            data['form_is_valid'] = True
+            membership = organization.membership_set.all()
+            data['html_member_list'] = render_to_string('scheduler/partials/member_list.html',
+                                                        {'memberships': membership})  # the revised table rows / list
+        else:
+            data['form_is_valid'] = False
+
+    context.update({'form': crud_form.form, 'organization': organization})
+    data['html_form'] = render_to_string(crud_form.template_name, context, request=request)
+    return JsonResponse(data)
+
+
 def add_organization_member(request, org_pk):
     """renders a modal partial template for adding members to an organization.
 
@@ -48,24 +81,15 @@ def add_organization_member(request, org_pk):
     :return:
     """
 
-    data = dict()
-    organization = get_object_or_404(Organization, pk=org_pk)
-
     if request.method == 'POST':
         form = MembershipUpdateForm(request.POST)
-        if form.is_valid():
-            form.save()
-            data['form_is_valid'] = True
-        else:
-            data['form_is_valid'] = False
     else:
-        form = MembershipUpdateForm
+        form = MembershipUpdateForm()
 
-    context = {'form': form, 'organization': organization}
-    data['html_form'] = render_to_string('scheduler/add_organization_member.html',
-                                 context,
-                                 request=request, )
-    return JsonResponse(data)
+    crud_form = ObjectCrudFormObject(form,
+                                     'scheduler/partials/add_organization_member.html', org_pk)
+                                        # the form
+    return save_organization_membership(request, crud_form)
 
 
 class OrganizationMembershipListView(generic.ListView):
