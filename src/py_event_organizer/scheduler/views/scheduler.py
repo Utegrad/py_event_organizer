@@ -1,13 +1,14 @@
+import json
+
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.safestring import SafeString
 from django.views import generic
-from django.shortcuts import get_object_or_404
-import json
 
+from ..forms.participation_forms import MembershipUpdateForm, OrganizationUpdateForm, \
+    RemoveMembershipForm
 from ..models.participation import MembershipManager, Organization, Membership, Participant
-from ..forms.participation_forms import MembershipUpdateForm, DelegatesUpdateForm, \
-    OrganizationUpdateForm, ParticipantUpdateForm
 
 
 # Create your views here.
@@ -53,6 +54,12 @@ class ObjectCrudFormObject:
         self.object_id = object_id
 
 
+def get_organization_memberships_html(organization):
+    membership = organization.membership_set.all()
+    return render_to_string('scheduler/partials/member_list.html',
+                            {'memberships': membership})  # the revised table rows / list
+
+
 def save_organization_membership(request, crud_form):
     data = dict()
     context = dict()
@@ -62,9 +69,7 @@ def save_organization_membership(request, crud_form):
         if crud_form.form.is_valid():
             crud_form.form.save()
             data['form_is_valid'] = True
-            membership = organization.membership_set.all()
-            data['html_member_list'] = render_to_string('scheduler/partials/member_list.html',
-                                                        {'memberships': membership})  # the revised table rows / list
+            data['html_member_list'] = get_organization_memberships_html(organization)
         else:
             data['form_is_valid'] = False
 
@@ -88,8 +93,33 @@ def add_organization_member(request, org_pk):
 
     crud_form = ObjectCrudFormObject(form,
                                      'scheduler/partials/add_organization_member.html', org_pk)
-                                        # the form
+    # the form
     return save_organization_membership(request, crud_form)
+
+
+def remove_organization_membership(request, pk):
+    """ render modal partial template to confirm removal of organization membershp.
+        url name: remove_membership
+    """
+    data = dict()
+    context = dict()
+    membership = get_object_or_404(Membership, pk=pk)
+    organization = membership.organization
+    if request.method == 'POST':
+        form = RemoveMembershipForm(request.POST)
+        if form.is_valid():  # to check CSRF
+            data['form_is_valid'] = True
+            membership.delete()
+            data['html_member_list'] = get_organization_memberships_html(organization)
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = RemoveMembershipForm()
+        context.update({'organization': organization, 'membership': membership, 'form': form, })
+        data['html_form'] = render_to_string('scheduler/partials/remove_membership.html',
+                                             context, request=request)
+
+    return JsonResponse(data)
 
 
 class OrganizationMembershipListView(generic.ListView):

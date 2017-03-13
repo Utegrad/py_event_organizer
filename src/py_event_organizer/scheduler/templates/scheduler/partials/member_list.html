@@ -1,6 +1,10 @@
 {% for member in memberships %}
     <tr>
-        <td>#</td>
+        <td>
+            <button type="button" class="btn btn-xs btn-danger js-remove-member"
+                            data-url="{% url 'scheduler:remove_membership' member.id %}">
+                    <span class="glyphicon glyphicon-minus"></span></button>
+        </td>
         <td>{{ member.participant }}</td>
         <td>{{ member.role }}</td>
     </tr>

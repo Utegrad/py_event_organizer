@@ -6,7 +6,9 @@
 
 /* context_data refers to JSON object given through the organization_members.html template*/
 $(function() {
-
+    function getCookie(name) {
+        return Cookies.get(name);
+    }
 
     var loadForm = function () {
         var btn = $(this);
@@ -23,7 +25,7 @@ $(function() {
         });
     };
 
-    var saveForm = function () {
+    var submitForm = function () {
         var form = $(this);
         // debugger;
         $.ajax({
@@ -46,7 +48,10 @@ $(function() {
 
     //add member to organization
     $(".js-add-member").click(loadForm);
-    $("#modal-member").on("submit", ".js-add-member-form", saveForm);
+    $("#modal-member").on("submit", ".js-add-member-form", submitForm);
+
+    $("#memberships_table").on("click", ".js-remove-member", {}, loadForm);
+    $("#modal-member").on("submit", ".js-remove-membership-form", {}, submitForm);
 
 });
 

@@ -1,14 +1,15 @@
-import unittest
 import sys
+import unittest
 
 from django.http import Http404
 from django.test import RequestFactory
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.urls import reverse
 
+from ..models.participation import Participant, Membership, Organization
 from ..views.scheduler import MyManagedOrgsListView, OrganizationMembershipListView, \
-    UpdateOrganizationView, UpdateMembershipView, MyOrgsListView, add_organization_member
-from ..models.participation import Participant, Membership, Organization, Delegates
+    UpdateOrganizationView, UpdateMembershipView, MyOrgsListView, add_organization_member, \
+    remove_organization_membership
 
 
 class SchedulerTests(unittest.TestCase):
@@ -20,10 +21,6 @@ class SchedulerTests(unittest.TestCase):
     organization_2 = None
     membership_1 = None
     membership_2 = None
-
-    def setUp(self):
-        self.pk_arg = 1
-        self.factory = RequestFactory()
 
     def set_membership_test_data(self, first_names, last_names, org_names):
         """Saves a couple of participant, organizaton, and membership object to test against
@@ -54,6 +51,13 @@ class SchedulerTests(unittest.TestCase):
         membership_2.save()
         self.membership_2 = membership_2
 
+    def setUp(self):
+        self.pk_arg = 1
+        self.factory = RequestFactory()
+        self.set_membership_test_data(first_names=('Joe', 'Betty'),
+                                      last_names=('Blow', 'Boop'),
+                                      org_names=('Org1', 'Org2'))
+
 
 class MyOrganizationsViewTests(SchedulerTests):
     def test_MyManagedOrgsListView_returns_200(self):
@@ -63,9 +67,6 @@ class MyOrganizationsViewTests(SchedulerTests):
         self.assertEqual(response.status_code, 200)
 
     def test_MyManagedOrgsListView_has_context_data_objects(self):
-        self.set_membership_test_data(first_names=('Joe', 'Betty'),
-                                      last_names=('Blow', 'Boop'),
-                                      org_names=('Org1', 'Org2'))
         request = self.factory.get(reverse('scheduler:my_managed_orgs',
                                            kwargs={'pk': self.pk_arg}))
         response = MyManagedOrgsListView.as_view()(request, pk=self.pk_arg)
@@ -108,9 +109,19 @@ class AddOrganizationMemberTests(SchedulerTests):
                                 'organization': self.organization_2,
                                 'role': 'VIEW'}
         request = self.factory.post(reverse('scheduler:add_member',
-                                            kwargs={'org_pk': self.pk_arg},),
+                                            kwargs={'org_pk': self.pk_arg}, ),
                                     data=membership_post_data)
         response = add_organization_member(request, self.pk_arg)
+        self.assertEqual(response.status_code, 200)
+
+
+class RemoveOrganizationMemberTests(SchedulerTests):
+    """ Tests for the remove_organization_member method"""
+    def test_remove_organization_member_get_returns_200(self):
+        """ Test get request for confirmation to remove membership from organization."""
+        request = self.factory.get(reverse('scheduler:remove_membership',
+                                            kwargs={'pk': self.membership_2.id}))
+        response = remove_organization_membership(request=request, pk=self.membership_2.id)
         self.assertEqual(response.status_code, 200)
 
 

@@ -16,6 +16,13 @@ class MembershipUpdateForm(ModelForm):
         fields = ('participant', 'organization', 'role',)
 
 
+class RemoveMembershipForm(ModelForm):
+
+    class Meta:
+        model = Membership
+        fields = []
+
+
 class ParticipantUpdateForm(ModelForm):
 
     class Meta:

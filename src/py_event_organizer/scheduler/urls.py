@@ -2,7 +2,8 @@ from django.conf.urls import url
 from .views.standard import IndexView as home_page
 from .views.scheduler import MyManagedOrgsListView
 from .views.scheduler import UpdateOrganizationView, UpdateMembershipView, \
-    OrganizationMembershipListView, MyOrgsListView, add_organization_member
+    OrganizationMembershipListView, MyOrgsListView, add_organization_member, \
+    remove_organization_membership
 
 app_name = 'scheduler'
 urlpatterns = [
@@ -14,6 +15,7 @@ urlpatterns = [
 
     url(r'^membership/(?P<pk>\d+)/update/', view=UpdateMembershipView.as_view(),
         name='update_membership'),
+    url(r'^membership/(?P<pk>\d+)/remove/', view=remove_organization_membership, name='remove_membership'),
 
     url('^organization/(?P<pk>\d+)/members/', view=OrganizationMembershipListView.as_view(),
         name='organization_membership'),
