@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
+{% if membership %}
 <form method="post" action="{% url 'scheduler:remove_membership' membership.id %}"
       class="js-remove-membership-form">
     {% csrf_token %}
@@ -20,3 +21,4 @@
         <button type="submit" class="btn btn-danger">Remove Membership</button>
     </div>
 </form>
+{% endif %}
