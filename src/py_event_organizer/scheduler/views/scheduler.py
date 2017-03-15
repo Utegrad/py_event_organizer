@@ -94,7 +94,7 @@ def remove_organization_membership(request, pk):
     else:
         form = RemoveMembershipForm()
         template_name = 'scheduler/partials/remove_membership.html'
-        context.update({'organization': organization, 'membership': membership, 'form': form, })
+        context.update({'form': form, 'organization': organization, 'membership': membership, })
         data['html_form'] = render_to_string(template_name, context, request=request)
 
     return JsonResponse(data)
