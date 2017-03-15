@@ -69,7 +69,6 @@ def add_organization_member(request, org_pk):
             data['form_is_valid'] = False
     else:
         form = MembershipUpdateForm()
-
     template_name = 'scheduler/partials/add_organization_member.html'
     context.update({'form': form, 'organization': organization})
     data['html_form'] = render_to_string(template_name, context, request=request)

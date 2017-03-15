@@ -23,7 +23,6 @@ class Participant(TimeStampedObjectModel):
         return "{0}".format(self.full_name)
 
 
-
 class Organization(TimeStampedObjectModel):
     name = models.CharField(max_length=64)
     members = models.ManyToManyField(Participant, through='Membership', )
@@ -48,7 +47,7 @@ class Membership(TimeStampedObjectModel):
         return reverse('scheduler:list_memberhips', kwargs={'pk': self.pk})
 
     @property
-    def memberset_organization_name(self):
+    def member_set_organization_name(self):
         return self.objects.all()[0].organization
 
     class Meta:
@@ -69,7 +68,6 @@ class MembershipManager(models.Manager):
             return self.get_participant_memberships(participant_id)
         else:
             return self.get_participant_memberships_by_role(participant_id, role)
-
 
 
 class Delegates(TimeStampedObjectModel):
