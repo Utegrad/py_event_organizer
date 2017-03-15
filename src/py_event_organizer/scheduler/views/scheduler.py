@@ -42,41 +42,11 @@ class UpdateMembershipView(generic.UpdateView):
     model = Membership
 
 
-class ObjectCrudFormObject:
-    """class created to hold arguments for save_organization_membership function"""
-    form = None
-    template_name = None
-    object_id = None
-
-    def __init__(self, form, template_name, object_id):
-        self.form = form
-        self.template_name = template_name
-        self.object_id = object_id
-
-
-def get_organization_memberships_html(organization):
-    membership = organization.membership_set.all()
-    return render_to_string('scheduler/partials/member_list.html',
-                            {'memberships': membership})  # the revised table rows / list
-
-
-def save_organization_membership(request, crud_form):
-    data = dict()
-    context = dict()
-    organization = get_object_or_404(Organization, pk=crud_form.object_id)
-
-    if request.method == 'POST':
-        if crud_form.form.is_valid():
-            crud_form.form.save()
-            data['form_is_valid'] = True
-            data['html_member_list'] = get_organization_memberships_html(organization)
-        else:
-            data['form_is_valid'] = False
-
-    context.update({'form': crud_form.form, 'organization': organization})
-    data['html_form'] = render_to_string(crud_form.template_name, context, request=request)
-    return JsonResponse(data)
-
+def render_object_membership_set_to_string(organization, template_name=None):
+    if template_name is None:
+        template_name = 'scheduler/partials/member_list.html'
+    membership_set_all = organization.membership_set.all()
+    return render_to_string(template_name, {'memberships': membership_set_all})  # the revised table rows / list
 
 def add_organization_member(request, org_pk):
     """renders a modal partial template for adding members to an organization.
@@ -85,17 +55,25 @@ def add_organization_member(request, org_pk):
     :param org_pk: Organization PK to add members into
     :return:
     """
+    data = dict()
+    context = dict()
+    organization = get_object_or_404(Organization, pk=org_pk)
 
     if request.method == 'POST':
         form = MembershipUpdateForm(request.POST)
+        if form.is_valid():
+            form.save()
+            data['form_is_valid'] = True
+            data['html_member_list'] = render_object_membership_set_to_string(organization)
+        else:
+            data['form_is_valid'] = False
     else:
         form = MembershipUpdateForm()
 
-    crud_form = ObjectCrudFormObject(form,
-                                     'scheduler/partials/add_organization_member.html', org_pk)
-    # the form
-    return save_organization_membership(request, crud_form)
-
+    template_name = 'scheduler/partials/add_organization_member.html'
+    context.update({'form': form, 'organization': organization})
+    data['html_form'] = render_to_string(template_name, context, request=request)
+    return JsonResponse(data)
 
 def remove_organization_membership(request, pk):
     """ render modal partial template to confirm removal of organization membershp.
@@ -105,19 +83,20 @@ def remove_organization_membership(request, pk):
     context = dict()
     membership = get_object_or_404(Membership, pk=pk)
     organization = membership.organization
+
     if request.method == 'POST':
         form = RemoveMembershipForm(request.POST)
         if form.is_valid():  # to check CSRF
-            data['form_is_valid'] = True
             membership.delete()
-            data['html_member_list'] = get_organization_memberships_html(organization)
+            data['form_is_valid'] = True
+            data['html_member_list'] = render_object_membership_set_to_string(organization)
         else:
             data['form_is_valid'] = False
     else:
         form = RemoveMembershipForm()
+        template_name = 'scheduler/partials/remove_membership.html'
         context.update({'organization': organization, 'membership': membership, 'form': form, })
-        data['html_form'] = render_to_string('scheduler/partials/remove_membership.html',
-                                             context, request=request)
+        data['html_form'] = render_to_string(template_name, context, request=request)
 
     return JsonResponse(data)
 
