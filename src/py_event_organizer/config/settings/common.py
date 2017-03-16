@@ -71,3 +71,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (ROOT_DIR('static'), )
+
+LOGIN_REDIRECT_URL = 'core:index'
+LOGIN_URL = 'core:login'
+LOGOUT_REDIRECT_URL = 'core:index'

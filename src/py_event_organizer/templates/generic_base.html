@@ -61,6 +61,17 @@
                   </ul>
                 </li>
               </ul>
+                {% block navbar_login %}
+                <div id="auth_id" class="navbar-right">
+                  {% if user.is_anonymous %}
+                      Register &colon;&colon;
+                  <a class="btn btn-primary btn-sm" href="{% url 'core:login' %}" role="button">LOGIN</a>
+                  {% else %}
+                      <p>{{ user }}</p>
+                    <a class="btn btn-warning btn-sm" href="{% url 'core:logout' %}" role="button">LOGOUT</a>
+                  {% endif %}
+              </div>
+                {% endblock navbar_login %}
             </div><!--/.nav-collapse -->
           </div>
         </nav>

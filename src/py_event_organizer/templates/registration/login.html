@@ -1,0 +1,19 @@
+{% extends 'generic_base.html' %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block main_content %}
+<div>
+        <p class="page-header lead">Login:</p>
+    <form method="post" action="{% url 'core:login' %}">
+        <div class="form-group">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input type="hidden" name="next" value="{{ next }}" />
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </form>
+</div>
+{% endblock main_content %}

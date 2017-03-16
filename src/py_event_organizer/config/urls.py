@@ -22,7 +22,7 @@ from scheduler.views.standard import IndexView as SchedulerIndex
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^scheduler/', include('scheduler.urls')),
-    url(r'^$', include('core.urls', namespace='core')),
+    url(r'^', include('core.urls', namespace='core')),
     url(r'^api/', include('core.api', namespace='api')),
 ]
 

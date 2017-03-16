@@ -1,5 +1,7 @@
 import json
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
@@ -15,7 +17,7 @@ from ..models.participation import MembershipManager, Organization, Membership, 
 
 
 # TODO: View needs to be limited to match pk to logged in user
-class MyManagedOrgsListView(generic.ListView):
+class MyManagedOrgsListView(LoginRequiredMixin, generic.ListView):
     template_name = 'scheduler/my_managed_orgs.html'
     context_object_name = 'my_managed_orgs'
 
@@ -26,14 +28,14 @@ class MyManagedOrgsListView(generic.ListView):
         return query_set
 
 
-class UpdateOrganizationView(generic.UpdateView):
+class UpdateOrganizationView(LoginRequiredMixin, generic.UpdateView):
     """Allows for updating properties of an Organization"""
     template_name = 'scheduler/update_organization.html'
     form_class = OrganizationUpdateForm
     model = Organization
 
 
-class UpdateMembershipView(generic.UpdateView):
+class UpdateMembershipView(LoginRequiredMixin, generic.UpdateView):
     """Doesn't make sense to update a membership outside the
     context of managing an Organization.
     """
@@ -48,6 +50,7 @@ def render_object_membership_set_to_string(organization, template_name=None):
     membership_set_all = organization.membership_set.all()
     return render_to_string(template_name, {'memberships': membership_set_all})  # the revised table rows / list
 
+@login_required()
 def add_organization_member(request, org_pk):
     """renders a modal partial template for adding members to an organization.
 
@@ -72,10 +75,13 @@ def add_organization_member(request, org_pk):
     template_name = 'scheduler/partials/add_organization_member.html'
     context.update({'form': form, 'organization': organization})
     data['html_form'] = render_to_string(template_name, context, request=request)
+
     return JsonResponse(data)
 
+@login_required()
 def remove_organization_membership(request, pk):
-    """ render modal partial template to confirm removal of organization membershp.
+    """ render modal partial template to confirm removal of organization membership.
+
         url name: remove_membership
     """
     data = dict()
@@ -100,7 +106,7 @@ def remove_organization_membership(request, pk):
     return JsonResponse(data)
 
 
-class OrganizationMembershipListView(generic.ListView):
+class OrganizationMembershipListView(LoginRequiredMixin, generic.ListView):
     """Lists membership for an organization"""
     template_name = 'scheduler/organization_membership.html'
     context_object_name = 'memberships'
@@ -119,7 +125,7 @@ class OrganizationMembershipListView(generic.ListView):
         return organization.membership_set.all()
 
 
-class MyOrgsListView(generic.ListView):
+class MyOrgsListView(LoginRequiredMixin, generic.ListView):
     """Listing of organizations that a participant is a member of"""
     template_name = 'scheduler/my_memberships.html'
     context_object_name = 'my_memberships'
