@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 
@@ -5,6 +6,7 @@ from .common import TimeStampedObjectModel, CONTACT_TYPES
 
 
 class Participant(TimeStampedObjectModel):
+    user = models.OneToOneField(User, blank=True, null=True, on_delete=models.SET_NULL)
     first_name = models.CharField(max_length=48, blank=False, )
     last_name = models.CharField(max_length=48, blank=True, )
     nick_name = models.CharField(max_length=64, blank=True, )
@@ -14,6 +16,8 @@ class Participant(TimeStampedObjectModel):
                                        related_name='related_to', blank=True )
     deferential_delegation = models.BooleanField(help_text= 'only delegates should receive notifications',
                                                  default=False, )
+    direct_participant = models.BooleanField(help_text='Participant is a direct participant in the organization events',
+                                             default=True)
 
     @property
     def full_name(self):
