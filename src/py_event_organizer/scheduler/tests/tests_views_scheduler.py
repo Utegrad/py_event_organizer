@@ -80,27 +80,37 @@ class MyOrganizationsViewTests(SchedulerTests):
     def setUp(self):
         super().setUp()
         self.user = create_user(self.auth_email)
+        self.participant = Participant.objects.create(last_name=self.user.last_name, user=self.user)
 
     def test_MyManagedOrgsListView_returns_200(self):
-        request = self.factory.get(reverse('scheduler:my_managed_orgs',
-                                           kwargs={'pk': self.pk_arg}))
+        request = self.factory.get(reverse('scheduler:my_managed_orgs'))
 
         request.user = self.user
-        response = MyManagedOrgsListView.as_view()(request, pk=self.pk_arg)
+        response = MyManagedOrgsListView.as_view()(request)
         self.assertEqual(response.status_code, 200)
 
     def test_MyManagedOrgsListView_has_context_data_objects(self):
-        request = self.factory.get(reverse('scheduler:my_managed_orgs',
-                                           kwargs={'pk': self.pk_arg}))
+        request = self.factory.get(reverse('scheduler:my_managed_orgs'))
         request.user = self.user
-        response = MyManagedOrgsListView.as_view()(request, pk=self.pk_arg)
-        self.assertGreaterEqual(len(response.context_data['object_list']), 1)
+        participant = self.user.participant
+        organization = Organization.objects.create(name=random_string())
+        membership = Membership.objects.create(participant=participant, organization=organization, role='EDIT')
+        response = MyManagedOrgsListView.as_view()(request)
+        self.assertGreaterEqual(len(response.context_data['my_managed_orgs']), 1)
 
     def test_MyOrgsListView_returns_200(self):
-        request = self.factory.get(reverse('scheduler:my_memberships', kwargs={'pk': self.pk_arg}))
+        request = self.factory.get(reverse('scheduler:my_memberships'))
         request.user = self.user
-        response = MyOrgsListView.as_view()(request, pk=self.pk_arg)
+        response = MyOrgsListView.as_view()(request)
         self.assertEqual(response.status_code, 200)
+
+    @unittest.skip("Not sure why the user I create here has a Participant record")
+    def test_MyManagedOrgsListView_404_for_no_participant_record(self):
+        factory = RequestFactory()
+        request = factory.get(reverse('scheduler:my_managed_orgs'))
+        request.user = User.objects.create_user(username=random_string(), password=random_string(), email='foo.bar@baz.net')
+        with self.assertRaises(Http404):
+            response = MyOrgsListView.as_view()(request)
 
 
 class MyManagedOrgsListViewTests(TestCase):
@@ -108,13 +118,15 @@ class MyManagedOrgsListViewTests(TestCase):
         self.password = random_string()
         self.username = random_string()
         self.user = create_user(email='foo@bar.baz', username=self.username, password=self.password)
+        self.participant = Participant.objects.create(last_name=random_string(), user=self.user)
 
     def test_MyManagedOrgsListView_context_set(self):
-        pk_arg = 1
+        org = Organization.objects.create(name=random_string())
+        ptp = self.participant
+        membership = Membership.objects.create(participant=ptp, organization=org, role='EDIT')
         self.client.login(username=self.username, password=self.password)
-        response = self.client.get(reverse('scheduler:my_managed_orgs',
-                                           kwargs={'pk': pk_arg}))
-        self.assertQuerysetEqual(response.context['my_managed_orgs'], [])
+        response = self.client.get(reverse('scheduler:my_managed_orgs'))
+        self.assertGreaterEqual(len(response.context['my_managed_orgs']),1)
 
 
 class AddOrganizationMemberTests(SchedulerTests):
@@ -126,10 +138,10 @@ class AddOrganizationMemberTests(SchedulerTests):
 
     def test_add_organization_member_get_returns_200(self):
         # Setup
-        request = self.factory.get(reverse('scheduler:add_member', kwargs={'org_pk': self.pk_arg}))
+        request = self.factory.get(reverse('scheduler:add_member', kwargs={'org_pk': self.organization_1.id}))
         request.user = self.user
         # Run
-        response = add_organization_member(request, org_pk=self.pk_arg)
+        response = add_organization_member(request, org_pk=self.organization_1.id)
         # Assert
         self.assertEqual(response.status_code, 200)
 
@@ -147,10 +159,10 @@ class AddOrganizationMemberTests(SchedulerTests):
                                 'organization': self.organization_2,
                                 'role': 'VIEW'}
         request = self.factory.post(reverse('scheduler:add_member',
-                                            kwargs={'org_pk': self.pk_arg}, ),
+                                            kwargs={'org_pk': self.organization_2.id}, ),
                                     data=membership_post_data)
         request.user = self.user
-        response = add_organization_member(request, self.pk_arg)
+        response = add_organization_member(request, self.organization_2.id)
         self.assertEqual(response.status_code, 200)
 
 
@@ -177,9 +189,9 @@ class OrganizationMembershipListViewTests(SchedulerTests):
 
     def test_OrganizationMembershipListView_returns_200(self):
         request = self.factory.get(reverse('scheduler:organization_membership',
-                                           kwargs={'pk': self.pk_arg}))
+                                           kwargs={'pk': self.organization_1.id}))
         request.user = self.user
-        response = OrganizationMembershipListView.as_view()(request, pk=self.pk_arg)
+        response = OrganizationMembershipListView.as_view()(request, pk=self.organization_1.id)
         self.assertEqual(response.status_code, 200)
 
     def test_OrganizationMembershipListView_status_code_404_with_bad_pk(self):
@@ -197,10 +209,11 @@ class UpdateOrganizationViewTests(SchedulerTests):
         self.user = create_user(self.auth_email)
 
     def test_UpdateMembershipView_returns_200(self):
+        org = Organization.objects.create(name=random_string())
         request = self.factory.get(reverse('scheduler:update_organization',
                                            kwargs={'pk': self.pk_arg}))
         request.user = self.user
-        response = UpdateOrganizationView.as_view()(request, pk=self.pk_arg)
+        response = UpdateOrganizationView.as_view()(request, pk=org.id)
         self.assertEqual(response.status_code, 200)
 
 
@@ -213,5 +226,5 @@ class UpdateMembershipViewTests(SchedulerTests):
         request = self.factory.get(reverse('scheduler:update_membership',
                                            kwargs={'pk': self.pk_arg}))
         request.user = self.user
-        response = UpdateMembershipView.as_view()(request, pk=self.pk_arg)
+        response = UpdateMembershipView.as_view()(request, pk=self.organization_1.id)
         self.assertEqual(response.status_code, 200)

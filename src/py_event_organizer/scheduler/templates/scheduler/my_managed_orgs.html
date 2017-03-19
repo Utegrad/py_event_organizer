@@ -39,7 +39,7 @@
         </div>
         <p class="lead bg-warning">Couldn't find any organizations where you're setup for configuring memberships</p>
             <ul>
-                <li>My Memberships</li>
+                <li><a href="{% url 'scheduler:my_memberships' %}">My Memberships</a></li>
                 <li>Create an Organization</li>
             </ul>
     {% endif %}

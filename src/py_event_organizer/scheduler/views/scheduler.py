@@ -2,6 +2,7 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import Http404
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
@@ -16,15 +17,18 @@ from ..models.participation import MembershipManager, Organization, Membership, 
 # Create your views here.
 
 
-# TODO: View needs to be limited to match pk to logged in user
 class MyManagedOrgsListView(LoginRequiredMixin, generic.ListView):
     template_name = 'scheduler/my_managed_orgs.html'
     context_object_name = 'my_managed_orgs'
 
     def get_queryset(self):
         mgr = MembershipManager()
-        query_set = mgr.get_participant_memberships_by_role(participant_id=self.kwargs['pk'],
-                                                            role='EDIT')
+        query_set = None
+        try:
+            query_set = mgr.get_participant_memberships_by_role(participant_id=self.request.user.participant.id,
+                                                                role='EDIT')
+        except Participant.DoesNotExist:
+            raise Http404("Participant record not found for user")
         return query_set
 
 
@@ -131,5 +135,8 @@ class MyOrgsListView(LoginRequiredMixin, generic.ListView):
     context_object_name = 'my_memberships'
 
     def get_queryset(self):
-        participant = get_object_or_404(Participant, pk=self.kwargs['pk'])
+        try:
+            participant = get_object_or_404(Participant, pk=self.request.user.participant.id)
+        except Participant.DoesNotExist:
+            return None
         return Membership.objects.filter(participant=participant)

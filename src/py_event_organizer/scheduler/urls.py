@@ -9,9 +9,10 @@ app_name = 'scheduler'
 urlpatterns = [
     url(r'^$', view=home_page.as_view(), name='index'),
 
-    url(r'^participant/(?P<pk>\d+)/managed_orgs/', view=MyManagedOrgsListView.as_view(),
+    url(r'^participant/managed_orgs/', view=MyManagedOrgsListView.as_view(),
         name='my_managed_orgs'),
-    url(r'^participant/(?P<pk>\d+)/membership/', view=MyOrgsListView.as_view(), name='my_memberships' ),
+    url(r'^participant/membership/', view=MyOrgsListView.as_view(), name='my_memberships' ),
+
 
     url(r'^membership/(?P<pk>\d+)/update/', view=UpdateMembershipView.as_view(),
         name='update_membership'),

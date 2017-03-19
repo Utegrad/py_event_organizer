@@ -51,17 +51,16 @@
                     <li><a href="#">An Action</a> </li>
                     <li><a href="#">Another action</a></li>
                     <li><a href="#">Something else here</a></li>
-                      {% if user.is_anonymous %}
-                        <li><a href="#">Register</a></li>
-                      {% else %}
+                  {% if user.is_anonymous %}
+                    <li><a href="#">Register</a></li>
+                  {% else %}
                     <li role="separator" class="divider"></li>
                     <li class="dropdown-header">My Organizations</li>
-                      <!-- TODO: get currently logged in user details into context -->
-                    <li><a href="{% url 'scheduler:my_memberships' 6 %}">All</a></li>
-                    <li><a href="{% url 'scheduler:my_managed_orgs' 1 %}">Manage</a></li>
+                    <li><a href="{% url 'scheduler:my_memberships' %}">All</a></li>
+                    <li><a href="{% url 'scheduler:my_managed_orgs' %}">Manage</a></li>
                     <li><a href="#">Another Separated link</a></li>
                     <li><a href="#">One more separated link</a></li>
-                      {% endif %}
+                  {% endif %}
                   </ul>
                 </li>
               </ul>
