@@ -54,6 +54,7 @@ def render_object_membership_set_to_string(organization, template_name=None):
     membership_set_all = organization.membership_set.all()
     return render_to_string(template_name, {'memberships': membership_set_all})  # the revised table rows / list
 
+
 @login_required()
 def add_organization_member(request, org_pk):
     """renders a modal partial template for adding members to an organization.
@@ -75,12 +76,13 @@ def add_organization_member(request, org_pk):
         else:
             data['form_is_valid'] = False
     else:
-        form = MembershipUpdateForm()
+        form = MembershipUpdateForm()  # TODO: Set the organization value from what we have via the org_pk parameter
     template_name = 'scheduler/partials/add_organization_member.html'
     context.update({'form': form, 'organization': organization})
     data['html_form'] = render_to_string(template_name, context, request=request)
 
     return JsonResponse(data)
+
 
 @login_required()
 def remove_organization_membership(request, pk):

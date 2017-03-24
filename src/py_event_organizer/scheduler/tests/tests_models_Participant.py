@@ -1,8 +1,7 @@
 import unittest
-from unittest.mock import MagicMock
 
+from .tests_views_scheduler import random_string
 from ..models.participation import Participant, Organization, Membership, MembershipManager
-
 
 class ParticipantTestCases(unittest.TestCase):
     def setUp(self):
@@ -81,4 +80,23 @@ class MembershipTestCases(unittest.TestCase):
         self.assertEqual(len(p2_edit_memberships), self.p2_editor_count)
 
 
+class OrganizationPermissionTestCases(unittest.TestCase):
+
+    def test_participant_can_edit(self):
+        participant = Participant.objects.create(last_name=random_string())
+        organization = Organization.objects.create(name=random_string())
+        membership = Membership.objects.create(participant=participant,
+                                               organization=organization,
+                                               role='EDIT')
+        can_edit = organization.participant_can_edit_membership(participant)
+        self.assertTrue(can_edit)
+
+    def test_participant_can_not_edit(self):
+        participant = Participant.objects.create(last_name=random_string())
+        organization = Organization.objects.create(name=random_string())
+        membership = Membership.objects.create(participant=participant,
+                                               organization=organization,
+                                               role='VIEW')
+        can_edit = organization.participant_can_edit_membership(participant)
+        self.assertFalse(can_edit)
 

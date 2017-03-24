@@ -37,9 +37,18 @@ class Organization(TimeStampedObjectModel):
     def get_absolute_url(self):
         return reverse('scheduler:update_organization', kwargs={'pk': self.pk})
 
+    def participant_can_edit_membership(self, participant):
+        membership = self.membership_set.get(participant=participant)
+        role = membership.role
+        if role == 'EDIT':
+            return True
+        else:
+            return False
+
 
 class Membership(TimeStampedObjectModel):
     MEMBER_TYPE = (('EDIT', 'Editor'), ('VIEW', 'Viewer'),)
+    # first value is stored in the database, second value is shown on the Django admin UI
     participant = models.ForeignKey(Participant)
     organization = models.ForeignKey(Organization)
     role = models.CharField(max_length=4, choices=MEMBER_TYPE, default='EDIT', )
@@ -72,6 +81,7 @@ class MembershipManager(models.Manager):
             return self.get_participant_memberships(participant_id)
         else:
             return self.get_participant_memberships_by_role(participant_id, role)
+
 
 
 class Delegates(TimeStampedObjectModel):
