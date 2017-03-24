@@ -9,7 +9,8 @@ from django.template.loader import render_to_string
 from django.utils.safestring import SafeString
 from django.views import generic
 
-from ..forms.participation_forms import MembershipUpdateForm, OrganizationUpdateForm, \
+from scheduler.mixins.json_response_mixin import JsonResponseMixin
+from ..forms.participation_forms import OrganizationMembershipUpdateForm, OrganizationUpdateForm, \
     RemoveMembershipForm
 from ..models.participation import MembershipManager, Organization, Membership, Participant
 
@@ -44,7 +45,7 @@ class UpdateMembershipView(LoginRequiredMixin, generic.UpdateView):
     context of managing an Organization.
     """
     template_name = 'scheduler/update_membership.html'
-    form_class = MembershipUpdateForm
+    form_class = OrganizationMembershipUpdateForm
     model = Membership
 
 
@@ -57,18 +58,20 @@ def render_object_membership_set_to_string(organization, template_name=None):
 
 @login_required()
 def add_organization_member(request, org_pk):
-    """renders a modal partial template for adding members to an organization.
+    """
+    renders a modal partial template for adding members to an organization.
 
     :param request: HTTP request
     :param org_pk: Organization PK to add members into
-    :return:
+    :return: JsonResponse consisting of context and data for processing by ajax request
     """
+    # TODO: limit this view to users / participants with the EDIT role for the organization
     data = dict()
     context = dict()
     organization = get_object_or_404(Organization, pk=org_pk)
 
     if request.method == 'POST':
-        form = MembershipUpdateForm(request.POST)
+        form = OrganizationMembershipUpdateForm(request.POST)
         if form.is_valid():
             form.save()
             data['form_is_valid'] = True
@@ -76,7 +79,9 @@ def add_organization_member(request, org_pk):
         else:
             data['form_is_valid'] = False
     else:
-        form = MembershipUpdateForm()  # TODO: Set the organization value from what we have via the org_pk parameter
+        form = OrganizationMembershipUpdateForm()
+        form.initial['organization'] = organization
+        form.initial['role'] = 'VIEW'
     template_name = 'scheduler/partials/add_organization_member.html'
     context.update({'form': form, 'organization': organization})
     data['html_form'] = render_to_string(template_name, context, request=request)
