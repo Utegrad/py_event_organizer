@@ -28,7 +28,7 @@ class RemoveMembershipForm(ModelForm):
 class ParticipantUpdateForm(ModelForm):
     class Meta:
         model = Participant
-        fields = ('first_name', 'last_name', 'nick_name', 'prefered_contact_method',
+        fields = ('first_name', 'last_name', 'nick_name', "preferred_contact_method",
                   'deferential_delegation',)
 
 

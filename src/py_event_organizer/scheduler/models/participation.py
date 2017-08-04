@@ -10,11 +10,11 @@ class Participant(TimeStampedObjectModel):
     first_name = models.CharField(max_length=48, blank=False, )
     last_name = models.CharField(max_length=48, blank=True, )
     nick_name = models.CharField(max_length=64, blank=True, )
-    prefered_contact_method = models.CharField(max_length=5, choices=CONTACT_TYPES, default='SMS', )
+    preferred_contact_method = models.CharField(max_length=5, choices=CONTACT_TYPES, default='SMS', )
     delegates = models.ManyToManyField('self', through='Delegates',
                                        symmetrical=False,
-                                       related_name='related_to', blank=True )
-    deferential_delegation = models.BooleanField(help_text= 'only delegates should receive notifications',
+                                       related_name='related_to', blank=True)
+    deferential_delegation = models.BooleanField(help_text='only delegates should receive notifications',
                                                  default=False, )
     direct_participant = models.BooleanField(help_text='Participant is a direct participant in the organization events',
                                              default=True)
@@ -40,10 +40,7 @@ class Organization(TimeStampedObjectModel):
     def participant_can_edit_membership(self, participant):
         membership = self.membership_set.get(participant=participant)
         role = membership.role
-        if role == 'EDIT':
-            return True
-        else:
-            return False
+        return membership.participant_is_organization_editor
 
 
 class Membership(TimeStampedObjectModel):
@@ -56,15 +53,16 @@ class Membership(TimeStampedObjectModel):
     def __str__(self):
         return "{0} : {1}".format(self.participant, self.organization)
 
-    def get_absoute_url(self):
-        return reverse('scheduler:list_memberhips', kwargs={'pk': self.pk})
-
     @property
     def member_set_organization_name(self):
         return self.objects.all()[0].organization
 
+    @property
+    def participant_is_organization_editor(self):
+        return True if self.role == 'EDIT' else False
+
     class Meta:
-        unique_together = ( ('participant', 'organization'), )
+        unique_together = (('participant', 'organization'),)
 
 
 class MembershipManager(models.Manager):
@@ -83,7 +81,6 @@ class MembershipManager(models.Manager):
             return self.get_participant_memberships_by_role(participant_id, role)
 
 
-
 class Delegates(TimeStampedObjectModel):
     participant = models.ForeignKey(Participant, related_name='delegated_from')
     delegate = models.ForeignKey(Participant, related_name='delegated_to')
@@ -95,6 +92,4 @@ class Delegates(TimeStampedObjectModel):
     class Meta:
         verbose_name = "Contact Delegates"
         verbose_name_plural = "Delegates"
-        unique_together = ( ('participant', 'delegate', 'organization'), )
-
-
+        unique_together = (('participant', 'delegate', 'organization'),)

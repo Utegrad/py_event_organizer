@@ -1,4 +1,5 @@
 import unittest
+from django.db.utils import DataError
 
 from .tests_views_scheduler import random_string
 from ..models.participation import Participant, Organization, Membership, MembershipManager
@@ -79,7 +80,16 @@ class MembershipTestCases(unittest.TestCase):
         self.assertEqual(len(p1_edit_memberships), self.p1_editor_count)
         self.assertEqual(len(p2_edit_memberships), self.p2_editor_count)
 
+    def test_membership_created_with_DataError(self):
+        """Trying to create a membership with an invalid role"""
+        participant = Participant.objects.create(last_name=random_string())
+        organization = Organization.objects.create(name=random_string())
+        with self.assertRaises(DataError):
+            membership = Membership.objects.create(participant=participant,
+                                               organization=organization,
+                                               role='GARBAGE')
 
+    
 class OrganizationPermissionTestCases(unittest.TestCase):
 
     def test_participant_can_edit(self):
@@ -99,4 +109,20 @@ class OrganizationPermissionTestCases(unittest.TestCase):
                                                role='VIEW')
         can_edit = organization.participant_can_edit_membership(participant)
         self.assertFalse(can_edit)
+
+    def test_Member_can_edit_organization_membership(self):
+        participant = Participant.objects.create(last_name=random_string())
+        organization = Organization.objects.create(name=random_string())
+        membership = Membership.objects.create(participant=participant,
+                                               organization=organization,
+                                               role='EDIT')
+        self.assertTrue(membership.participant_is_organization_editor)
+
+    def test_Member_can_not_edit_organization_membership(self):
+        participant = Participant.objects.create(last_name=random_string())
+        organization = Organization.objects.create(name=random_string())
+        membership = Membership.objects.create(participant=participant,
+                                               organization=organization,
+                                               role='VIEW')
+        self.assertFalse(membership.participant_is_organization_editor)
 
