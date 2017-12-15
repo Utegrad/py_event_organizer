@@ -138,3 +138,4 @@ ENV/
 node_modules/
 *.bak
 /src/py_event_organizer/static/js/
+db.sqlite3

@@ -4,6 +4,7 @@ from django.db.utils import DataError
 from .tests_views_scheduler import random_string
 from ..models.participation import Participant, Organization, Membership, MembershipManager
 
+
 class ParticipantTestCases(unittest.TestCase):
     def setUp(self):
         pass
@@ -86,10 +87,10 @@ class MembershipTestCases(unittest.TestCase):
         organization = Organization.objects.create(name=random_string())
         with self.assertRaises(DataError):
             membership = Membership.objects.create(participant=participant,
-                                               organization=organization,
-                                               role='GARBAGE')
+                                                   organization=organization,
+                                                   role='GARBAGE')
 
-    
+
 class OrganizationPermissionTestCases(unittest.TestCase):
 
     def test_participant_can_edit(self):
@@ -125,4 +126,3 @@ class OrganizationPermissionTestCases(unittest.TestCase):
                                                organization=organization,
                                                role='VIEW')
         self.assertFalse(membership.participant_is_organization_editor)
-

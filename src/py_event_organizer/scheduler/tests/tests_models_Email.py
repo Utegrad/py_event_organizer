@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from ..models.contacts import Email
 from ..models.participation import Participant
 
+
 class EmailTestCase(unittest.TestCase):
 
     def test_email_type_is_email(self):
@@ -18,7 +19,3 @@ class EmailTestCase(unittest.TestCase):
         email_contact = Email(contact_point="wrong", owner=participant)
         with self.assertRaises(ValidationError):
             email_contact.clean_fields()
-
-
-
-
