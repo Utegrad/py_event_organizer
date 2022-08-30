@@ -6,7 +6,7 @@
 	"dependencies": {
 		"bootstrap": "3.x",
 		"jquery": "3.x",
-		"angular": "1.6.2",
+		"angular": ">=1.8.0",
 		"js-cookie": "latest"
 	}
 }
